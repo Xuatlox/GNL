@@ -6,11 +6,22 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:24:57 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/18 18:15:06 by ansimonn         ###   ########.fr       */
+/*   Updated: 2025/11/19 12:20:49 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static int	check_buf(char **buf, char **sep)
+{
+	if (!**buf)
+	{
+		free(*buf);
+		*sep = NULL;
+		return (1);
+	}
+	return (0);
+}
 
 char	*get_next_line(int fd)
 {
@@ -33,11 +44,8 @@ char	*get_next_line(int fd)
 		else
 			sep = find_newline(&buf);
 	}
-	if (!buf[0])
-	{
-		free(buf);
+	if (check_buf(&buf, &sep))
 		return (NULL);
-	}
 	size = sep - buf;
 	sep = ft_strdup(sep + 1);
 	buf[size + 1] = 0;
