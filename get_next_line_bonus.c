@@ -6,18 +6,18 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:24:57 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/19 12:58:37 by ansimonn         ###   ########.fr       */
+/*   Updated: 2025/11/19 14:20:10 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-static int	check_buf(char **buf, char ***sep, int fd)
+static int	check_buf(char **buf, char **sep)
 {
 	if (!**buf)
 	{
 		free(*buf);
-		*sep[fd] = NULL;
+		*sep = NULL;
 		return (1);
 	}
 	return (0);
@@ -26,28 +26,34 @@ static int	check_buf(char **buf, char ***sep, int fd)
 char	*get_next_line(int fd)
 {
 	char		*buf;
-	static char	*sep[1024];
+	char		*sep;
+	static char	**seps;
 	int			size;
 
-	buf = sep[fd];
+	if (fd < 0 || fd >= 1024)
+		return (NULL);
+	if (!seps)
+		seps = ft_calloc(1024, sizeof(char *));
+	sep = seps[fd];
+	buf = sep;
 	if (buf)
-		sep[fd] = find_newline(&buf);
+		sep = find_newline(&buf);
 	else
 		buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	while (!sep[fd])
+	while (!sep)
 	{
 		if (!buf)
 			return (NULL);
 		size = ft_strlen(buf);
 		if (read(fd, &buf[size], BUFFER_SIZE) <= 0)
-			sep[fd] = &buf[size];
+			sep = &buf[size];
 		else
-			sep[fd] = find_newline(&buf);
+			sep = find_newline(&buf);
 	}
-	if (check_buf(&buf, &sep[fd], fd))
+	if (check_buf(&buf, &sep))
 		return (NULL);
-	size = sep[fd] - buf;
-	sep[fd] = ft_strdup(sep[fd] + 1);
+	size = sep - buf;
+	seps[fd] = ft_strdup(sep + 1);
 	buf[size + 1] = 0;
 	return (buf);
 }

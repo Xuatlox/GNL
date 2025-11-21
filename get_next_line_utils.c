@@ -6,42 +6,29 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:36:58 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/19 12:13:58 by ansimonn         ###   ########.fr       */
+/*   Updated: 2025/11/21 11:06:18 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-char	*resize(char *s)
+static char	*resize(char *s, int *size, const int i)
 {
 	char	*str;
-	int		size;
 
-	size = ft_strlen(s);
-	str = ft_calloc(size + BUFFER_SIZE + 1, sizeof(char));
+	str = ft_calloc(i + BUFFER_SIZE + 1, sizeof(char));
 	if (!str)
 		return (NULL);
-	size--;
-	while (size >= 0)
+	while (*size < i)
 	{
-		str[size] = s[size];
-		size--;
+		str[*size] = s[*size];
+		(*size)++;
 	}
 	free(s);
 	return (str);
 }
 
-char	*find_newline(char **s)
+char	*find_newline(char **s, int *size)
 {
 	int		i;
 
@@ -52,7 +39,7 @@ char	*find_newline(char **s)
 			return (*s + i);
 		i++;
 	}
-	*s = resize(*s);
+	*s = resize(*s, size, i);
 	return (0);
 }
 
@@ -61,16 +48,18 @@ char	*ft_strdup(const char *s)
 	char	*dup;
 	int		i;
 
-	dup = ft_calloc((ft_strlen(s) + 1), sizeof(char));
-	if (!dup)
-		return (NULL);
 	i = 0;
 	while (s[i])
+		i++;
+	dup = ft_calloc((i + 1), sizeof(char));
+	if (!dup)
+		return (NULL);
+	i--;
+	while (i >= 0)
 	{
 		dup[i] = s[i];
-		i++;
+		i--;
 	}
-	dup[i] = 0;
 	return (dup);
 }
 

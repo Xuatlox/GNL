@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/06 15:24:58 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/21 11:03:51 by ansimonn         ###   ########.fr       */
+/*   Created: 2025/11/21 09:10:20 by ansimonn          #+#    #+#             */
+/*   Updated: 2025/11/21 11:26:53 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
-# endif
-# include <stdlib.h>
-# include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
 
-char	*get_next_line(int fd);
-char	*find_newline(char **s, int *size);
-char	*ft_strdup(const char *s);
-void	*ft_calloc(size_t nmemb, size_t size);
+#include "get_next_line_bonus.h"
 
-#endif
+int	main()
+{
+	int	fd = open("test", O_RDONLY);
+	char	*buf;
+
+	while ((buf = get_next_line(fd)))
+	{
+		printf("%s", buf);
+		free(buf);
+	}
+}
