@@ -6,23 +6,25 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:36:58 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/21 11:06:18 by ansimonn         ###   ########.fr       */
+/*   Updated: 2025/11/24 10:58:05 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*resize(char *s, int *size, const int i)
+static char	*resize(char *s, int *size)
 {
 	char	*str;
+	int		i;
 
-	str = ft_calloc(i + BUFFER_SIZE + 1, sizeof(char));
+	i = 0;
+	str = ft_calloc(*size + BUFFER_SIZE + 1, sizeof(char));
 	if (!str)
 		return (NULL);
-	while (*size < i)
+	while (i < *size)
 	{
-		str[*size] = s[*size];
-		(*size)++;
+		str[i] = s[i];
+		i++;
 	}
 	free(s);
 	return (str);
@@ -30,17 +32,16 @@ static char	*resize(char *s, int *size, const int i)
 
 char	*find_newline(char **s, int *size)
 {
-	int		i;
-
-	i = 0;
-	while ((*s)[i])
+	if (!*s)
+		return (NULL);
+	while ((*s)[*size])
 	{
-		if ((*s)[i] == '\n')
-			return (*s + i);
-		i++;
+		if ((*s)[*size] == '\n')
+			return (*s + *size);
+		(*size)++;
 	}
-	*s = resize(*s, size, i);
-	return (0);
+	*s = resize(*s, size);
+	return (NULL);
 }
 
 char	*ft_strdup(const char *s)

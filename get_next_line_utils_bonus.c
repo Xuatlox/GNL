@@ -6,54 +6,42 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:36:58 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/19 12:47:47 by ansimonn         ###   ########.fr       */
+/*   Updated: 2025/11/24 13:55:28 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-char	*resize(char *s)
+static char	*resize(char *s, int *size)
 {
 	char	*str;
-	int		size;
+	int		i;
 
-	size = ft_strlen(s);
-	str = ft_calloc(size + BUFFER_SIZE + 1, sizeof(char));
+	i = 0;
+	str = ft_calloc(*size + BUFFER_SIZE + 1, sizeof(char));
 	if (!str)
 		return (NULL);
-	size--;
-	while (size >= 0)
+	while (i < *size)
 	{
-		str[size] = s[size];
-		size--;
+		str[i] = s[i];
+		i++;
 	}
 	free(s);
 	return (str);
 }
 
-char	*find_newline(char **s)
+char	*find_newline(char **s, int *size)
 {
-	int		i;
-
-	i = 0;
-	while ((*s)[i])
+	if (!*s)
+		return (NULL);
+	while ((*s)[*size])
 	{
-		if ((*s)[i] == '\n')
-			return (*s + i);
-		i++;
+		if ((*s)[*size] == '\n')
+			return (*s + *size);
+		(*size)++;
 	}
-	*s = resize(*s);
-	return (0);
+	*s = resize(*s, size);
+	return (NULL);
 }
 
 char	*ft_strdup(const char *s)
@@ -61,16 +49,18 @@ char	*ft_strdup(const char *s)
 	char	*dup;
 	int		i;
 
-	dup = ft_calloc((ft_strlen(s) + 1), sizeof(char));
-	if (!dup)
-		return (NULL);
 	i = 0;
 	while (s[i])
+		i++;
+	dup = ft_calloc((i + 1), sizeof(char));
+	if (!dup)
+		return (NULL);
+	i--;
+	while (i >= 0)
 	{
 		dup[i] = s[i];
-		i++;
+		i--;
 	}
-	dup[i] = 0;
 	return (dup);
 }
 

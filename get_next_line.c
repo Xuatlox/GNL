@@ -6,15 +6,33 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 15:24:57 by ansimonn          #+#    #+#             */
-/*   Updated: 2025/11/21 12:41:24 by ansimonn         ###   ########.fr       */
+/*   Updated: 2025/11/24 14:11:12 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+static char	*search_sep(char **buf, int *size, int fd)
+{
+	int		ret;
+
+	if (!*buf)
+		return ("");
+	ret = read(fd, &(*buf)[*size], BUFFER_SIZE);
+	if (ret == -1)
+	{
+		free(*buf);
+		*buf = NULL;
+		return (NULL);
+	}
+	if (ret == 0)
+		return (&(*buf)[*size]);
+	return (find_newline(buf, size));
+}
+
 static int	check_null(char **buf, char **sep)
 {
-	if (!**buf)
+	if (!*buf || !**buf)
 	{
 		free(*buf);
 		*sep = NULL;
@@ -29,6 +47,8 @@ char	*get_next_line(int fd)
 	static char	*sep;
 	int			size;
 
+	if (fd < 0 || fd > 1024)
+		return (NULL);
 	buf = sep;
 	size = 0;
 	if (buf)
@@ -36,19 +56,13 @@ char	*get_next_line(int fd)
 	else
 		buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	while (!sep)
-	{
-		if (!buf)
-			return (NULL);
-		if (read(fd, &buf[size], BUFFER_SIZE) <= 0)
-			sep = find_newline(&buf, &size);
-		else
-			sep = &buf[size + 1];
-	}
+		sep = search_sep(&buf, &size, fd);
 	if (check_null(&buf, &sep))
 		return (NULL);
-	size = sep - buf;
 	if (*sep)
 		sep = ft_strdup(sep + 1);
+	else
+		sep = NULL;
 	buf[size + 1] = 0;
 	return (buf);
 }
